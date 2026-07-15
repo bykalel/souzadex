@@ -8,7 +8,7 @@ A Souzadex é uma galeria colaborativa de imagens do Souza (Vitor Souza) geradas
 
 - a imagem em si;
 - o título (tirado do nome do arquivo);
-- o número do Souza (a posição dele na ordem de chegada — para sempre);
+- o número do Souza (a posição dele na ordem de chegada);
 - o avatar e o link do perfil do GitHub de quem enviou.
 
 O arquivo `souzas.js` é gerado automaticamente por um workflow do GitHub Actions quando o PR é aceito. Você não precisa (e não deve) editá-lo.
