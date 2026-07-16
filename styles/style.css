@@ -373,7 +373,14 @@ a:hover {
   color: var(--text-muted);
 }
 
-.page-size-control select {
+.page-size-select {
+  position: relative;
+}
+
+.page-size-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: inherit;
   font-size: 15px;
   color: var(--text);
@@ -382,10 +389,64 @@ a:hover {
   border-radius: var(--radius);
   padding: 6px 10px;
   cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.page-size-control select:hover {
+.page-size-trigger:hover {
   border-color: var(--text-muted);
+}
+
+.page-size-trigger:focus-visible {
+  outline: none;
+  border-color: var(--link);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.page-size-arrow {
+  color: var(--text-muted);
+  transition: transform 0.18s ease;
+}
+
+.page-size-select.open .page-size-arrow {
+  transform: rotate(180deg);
+}
+
+.page-size-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 100%;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(31, 35, 40, 0.12);
+  z-index: 20;
+}
+
+.page-size-menu[hidden] {
+  display: none;
+}
+
+.page-size-menu li {
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.page-size-menu li:hover,
+.page-size-menu li:focus {
+  outline: none;
+  background: var(--focus-ring);
+}
+
+.page-size-menu li[aria-selected="true"] {
+  color: var(--link);
+  font-weight: 600;
 }
 
 /* Pagination */

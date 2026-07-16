@@ -6,7 +6,6 @@
 
   var grid = document.getElementById("grid");
   var pagination = document.getElementById("pagination");
-  var sizeSelect = document.getElementById("page-size");
   var searchInput = document.getElementById("search");
 
   function titleFromFile(file) {
@@ -130,20 +129,97 @@
     return tokens;
   }
 
-  // Preenche o seletor de tamanho de página.
-  function setupSizeSelect() {
-    if (!sizeSelect) return;
+  // Dropdown customizado de tamanho de página: substitui o <select> nativo
+  // para permitir a seta girar ao abrir. Escolher um valor navega para a
+  // página 1 com ?size=N, preservando a busca (mesmo comportamento de antes).
+  function setupSizeDropdown() {
+    var root = document.getElementById("page-size");
+    if (!root) return;
+
+    var trigger = document.getElementById("page-size-trigger");
+    var valueEl = document.getElementById("page-size-value");
+    var menu = document.getElementById("page-size-menu");
+
+    valueEl.textContent = pageSize;
 
     SIZE_OPTIONS.forEach(function (n) {
-      var opt = document.createElement("option");
-      opt.value = n;
-      opt.textContent = n;
-      if (n === pageSize) opt.selected = true;
-      sizeSelect.appendChild(opt);
+      var li = document.createElement("li");
+      li.setAttribute("role", "option");
+      li.setAttribute("data-value", n);
+      li.setAttribute("tabindex", "-1");
+      li.textContent = n;
+      if (n === pageSize) li.setAttribute("aria-selected", "true");
+      menu.appendChild(li);
     });
 
-    sizeSelect.addEventListener("change", function () {
-      window.location.href = urlFor(1, parseInt(this.value, 10), query);
+    var options = Array.prototype.slice.call(menu.children);
+
+    function isOpen() {
+      return root.classList.contains("open");
+    }
+
+    function toggle(open) {
+      root.classList.toggle("open", open);
+      trigger.setAttribute("aria-expanded", open ? "true" : "false");
+      menu.hidden = !open;
+    }
+
+    function select(value) {
+      window.location.href = urlFor(1, parseInt(value, 10), query);
+    }
+
+    // Move o foco entre as opções do menu (delta = +1 para baixo, -1 para cima).
+    function focusOption(from, delta) {
+      var idx = options.indexOf(from);
+      var next = idx === -1
+        ? (delta > 0 ? 0 : options.length - 1)
+        : (idx + delta + options.length) % options.length;
+      options[next].focus();
+    }
+
+    trigger.addEventListener("click", function () {
+      toggle(!isOpen());
+      if (isOpen()) {
+        var current = menu.querySelector('[aria-selected="true"]') || options[0];
+        if (current) current.focus();
+      }
+    });
+
+    trigger.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggle(true);
+        var current = menu.querySelector('[aria-selected="true"]') || options[0];
+        if (current) current.focus();
+      } else if (event.key === "Escape") {
+        toggle(false);
+      }
+    });
+
+    options.forEach(function (li) {
+      li.addEventListener("click", function () {
+        select(this.getAttribute("data-value"));
+      });
+      li.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          select(this.getAttribute("data-value"));
+        } else if (event.key === "ArrowDown") {
+          event.preventDefault();
+          focusOption(this, 1);
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          focusOption(this, -1);
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          toggle(false);
+          trigger.focus();
+        }
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (isOpen() && !root.contains(event.target)) toggle(false);
     });
   }
 
@@ -240,7 +316,7 @@
     });
   }
 
-  setupSizeSelect();
+  setupSizeDropdown();
   setupSearch();
 
   fetch("/api/souzas")

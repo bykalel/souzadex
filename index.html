@@ -69,10 +69,22 @@
         <input id="search" type="search" placeholder="Buscar por nome…"
           aria-label="Buscar Souza por nome" autocomplete="off" spellcheck="false">
       </div>
-      <label class="page-size-control">
-        <span>Souzas por página:</span>
-        <select id="page-size" aria-label="Souzas por página"></select>
-      </label>
+      <div class="page-size-control">
+        <span id="page-size-label">Souzas por página:</span>
+        <div class="page-size-select" id="page-size">
+          <button type="button" class="page-size-trigger" id="page-size-trigger"
+            aria-haspopup="listbox" aria-expanded="false"
+            aria-labelledby="page-size-label page-size-value">
+            <span class="page-size-value" id="page-size-value"></span>
+            <svg class="page-size-arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <ul class="page-size-menu" id="page-size-menu" role="listbox"
+            aria-labelledby="page-size-label" hidden></ul>
+        </div>
+      </div>
     </div>
     <div class="grid" id="grid"></div>
     <nav class="pagination" id="pagination" aria-label="Paginação"></nav>
